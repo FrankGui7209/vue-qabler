@@ -1,14 +1,9 @@
 <template>
-  <div class="interface-page">
+  <div class="home">
     <q-header></q-header>
-    <q-tab></q-tab>
-    <a-row>
-      <a-col :span="2"></a-col>
-      <a-col :span="20">
-        <router-view></router-view>
-      </a-col>
-      <a-col :span="2"></a-col>
-    </a-row>
+    <q-tab tab="pool"></q-tab>
+    <!--<router-view></router-view>-->
+    <pool-table></pool-table>
     <q-footer></q-footer>
   </div>
 </template>
@@ -17,16 +12,21 @@
   import QHeader from '@/views/q-header/QHeader.vue'
   import QTab from '@/views/q-tab/QTab.vue'
   import QFooter from '@/views/q-footer/QFooter.vue'
+  import PoolTable from "./components/PoolTable";
+
   export default {
-    name: 'InterfacePage',
+    name: 'PoolManage',
     components: {
+      PoolTable,
       QHeader,
       QTab,
       QFooter
-    }
+    },
+    data() {
+      return {}
+    },
   }
 </script>
 
 <style lang="stylus" scoped>
-
 </style>

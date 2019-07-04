@@ -1,80 +1,71 @@
 <template>
   <div class="user-table">
+    <select-user :value="userid" @userChanged="userChanged" v-show="+userInfo.usertype===1"></select-user>
     <a-row>
       <a-col :span="2"></a-col>
       <a-col :span="20">
         <table class="ui selectable table">
           <thead>
           <tr>
-            <th>ID</th>
-            <th>用户名称</th>
-            <th>类型</th>
-            <th>状态</th>
-            <th>电话</th>
-            <th>设备数量</th>
-            <th>挖矿效率</th>
-            <th>总算力(kH/s)</th>
-            <th>已接受算力(kH/s)</th>
-            <th>已拒绝算力(kH/s)</th>
-            <th>收益能力(BTC/天)</th>
-            <th>累计收益(美元$)</th>
-            <th>累计收益(人民币￥)</th>
+            <th>设备ID</th>
+            <th>设备UUID</th>
+            <th>设备状态</th>
+            <th>设备算力</th>
+            <th>累计计算值</th>
+            <th>累计工作时长</th>
+            <th>接受的数量</th>
+            <th>拒绝的数量</th>
+            <th>接受效率</th>
+            <th>当前算法</th>
+            <th>算法策略</th>
+            <th>当前矿池</th>
             <th>操作</th>
           </tr>
           </thead>
           <tbody>
-          <tr v-for="(user,userIndex) in userList" :key="user.userid">
+          <tr v-for="(device,deviceIndex) in deviceList" :key="deviceIndex">
             <td>
-              <div class="miniScreen"><label>ID</label>{{user.userid}}</div>
+              <div class="miniScreen"><label>设备ID</label>{{device.eqid}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>用户名称</label>
-                <div class="name-date">
-                  <div class="name">{{user.username}}</div>
-                  <div class="date">注册: {{user.registtime}}</div>
-                </div>
-              </div>
+              <div class="miniScreen"><label>设备UUID</label> {{device.equuid}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>类型</label>{{user.usertype===1?'管理员':'普通'}}</div>
-            </td>
-            <td>
-              <div class="miniScreen"><label>状态</label>
+              <div class="miniScreen"><label>设备状态</label>
                 <el-switch
-                  v-model="user.userstate" @change="changeState(user)"
+                  v-model="device.buystate"
                   active-color="#13ce66"
                   inactive-color="#ff4949"
-                  :active-value="1"
-                  :inactive-value="0">
+                  :active-value="1" active-text="已购"
+                  :inactive-value="0" inactive-text="出让">
                 </el-switch>
               </div>
             </td>
             <td>
-              <div class="miniScreen"><label>电话</label>{{user.phone}}</div>
+              <div class="miniScreen"><label>设备算力</label>{{device.hashrate}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>设备数量</label>{{user.eqcount}}</div>
+              <div class="miniScreen"><label>累计计算值</label>{{device.hashtotal}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>挖矿效率</label>{{user.acceptrate}}</div>
+              <div class="miniScreen"><label>累计工作时长</label>{{device.worktime}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>总算力(kH/s)</label>{{user.hashratetotal}}</div>
+              <div class="miniScreen"><label>接受的数量</label>{{device.accept}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>已接受算力(kH/s)</label>{{user.acceptdtotal}}</div>
+              <div class="miniScreen"><label>拒绝的数量</label>{{device.reject}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>已拒绝算力(kH/s)</label>{{user.rejecttotal}}</div>
+              <div class="miniScreen"><label>接受效率</label>{{device.acceptrate}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>收益能力(BTC/天)</label>{{user.goldrate}}</div>
-            </td>
+              <div class="miniScreen"><label>当前算法</label>{{device.algo}}</div>
+            </td> <td>
+            <div class="miniScreen"><label>算法策略</label>{{device.algostrategy}}</div>
+          </td>
             <td>
-              <div class="miniScreen"><label>累计收益(美元$)</label>{{user.usdtotal}}</div>
-            </td>
-            <td>
-              <div class="miniScreen"><label>累计收益(人民币￥)</label>{{user.cnytotal}}</div>
+              <div class="miniScreen"><label>当前矿池</label>{{device.pool}}</div>
             </td>
             <td class="btns">
               <el-dropdown size="small" @command="actionHandle">
@@ -82,10 +73,11 @@
                   操作<i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item icon="el-icon-edit" :command="'modify-'+userIndex">编辑用户</el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-delete" :command="'delete-'+userIndex">删除用户</el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-office-building" divided :command="'device-'+userIndex">矿机管理</el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-help" :command="'pool-'+userIndex">矿池管理</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-edit" :command="'chart-'+deviceIndex">设备算力折线图</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-edit" divided :command="'buy-'+deviceIndex" :disabled="true">选购设备</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-delete" :command="'release-'+deviceIndex">转让/释放设备</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-office-building" :command="'algo-'+deviceIndex">配置算法策略</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-help" :command="'command-'+deviceIndex">发送设备指令</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </td>
@@ -98,7 +90,7 @@
     <a-row style="margin-top:10px;">
       <a-col :span="2"></a-col>
       <a-col :span="4">
-        <button class="btn btn-primary btn-sm" @click="addUser()"><i class="el-icon-plus"></i>&nbsp;新增用户</button>
+        <!--<button class="btn btn-primary btn-sm" @click="addDevice()"><i class="el-icon-plus"></i>&nbsp;新增用户</button>-->
       </a-col>
       <a-col :span="16" class="text-right">
         <el-pagination layout="prev, pager, next,total" :current-page.sync="pageIndex" :total="totalCount"
@@ -107,33 +99,33 @@
       <a-col :span="2"></a-col>
     </a-row>
     <el-dialog ref="dialog" :title="editTitle" :visible.sync="dialogFormVisible">
-      <el-form ref="editForm" :model="editUser" status-icon label-position="right" size="mini" label-width="100px" :rules="rules">
+      <el-form ref="editForm" :model="editDevice" status-icon label-position="right" size="mini" label-width="100px" :rules="rules">
         <el-form-item label="用户名称" prop="username">
-          <el-input required v-model="editUser.username" autoComplete="off" :disabled="editUser.userid>0"></el-input>
+          <el-input required v-model="editDevice.username" autoComplete="off" :disabled="editDevice.userid>0"></el-input>
         </el-form-item>
         <el-form-item label="电子邮件" prop="email">
-          <el-input type="email" v-model="editUser.email" autoComplete="off"></el-input>
+          <el-input type="email" v-model="editDevice.email" autoComplete="off"></el-input>
         </el-form-item>
         <el-form-item label="用户类型" prop="usertype">
-          <el-radio-group v-model="editUser.usertype" :disabled="userInfo.usertype===2">
+          <el-radio-group v-model="editDevice.usertype" :disabled="userInfo.usertype===2">
             <el-radio :label="1">管理员</el-radio>
             <el-radio :label="2">普通用户</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="手机号码" prop="phone">
-          <el-input v-model="editUser.phone" autoComplete="off"></el-input>
+          <el-input v-model="editDevice.phone" autoComplete="off"></el-input>
         </el-form-item>
         <el-form-item label="用户密码" prop="passwd"
-                      :rules="editUser.userid>0?[{validator: validatePass, trigger: 'blur'}]:[
+                      :rules="editDevice.userid>0?[{validator: validatePass, trigger: 'blur'}]:[
                       {required: true, message: '请输入用户密码', trigger: 'blur'},
                       {validator: validatePass, trigger: 'blur'}]">
-          <el-input type="password" v-model="editUser.passwd" autoComplete="off"></el-input>
+          <el-input type="password" v-model="editDevice.passwd" autoComplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass" :rules="editUser.userid>0?[{validator: validatePass2, trigger: 'blur'}]:[
+        <el-form-item label="确认密码" prop="checkPass" :rules="editDevice.userid>0?[{validator: validatePass2, trigger: 'blur'}]:[
             {required: true, message: '请输入确认密码', trigger: 'blur'},
             {validator: validatePass2, trigger: 'blur'}
           ]">
-          <el-input type="password" v-model="editUser.checkPass" autoComplete="off"></el-input>
+          <el-input type="password" v-model="editDevice.checkPass" autoComplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -146,27 +138,23 @@
 </template>
 
 <script>
-  import QAvatars from '../../../components/q-avatars/QAvatars.vue'
   import {mapState} from 'vuex';
-  import QButton from "../../../components/q-button/QButton";
   import md5 from 'md5'
+  import SelectUser from './SelectUser'
 
   const PAGE_SIZE = 20;
   let me
   export default {
-    name: 'UserTable',
-    components: {
-      QButton,
-      QAvatars
-    },
+    name: 'DeviceTable',
+    components: {SelectUser},
     data() {
-
       return {
+        userid: 0,
         pageIndex: 1,
         totalCount: 0,
-        userList: [],
+        deviceList: [],
         dialogFormVisible: false,
-        editUser: {},//正在编辑的用户
+        editDevice: {},//正在编辑的用户
         rules: {
           username: [
             {required: true, message: '请输入用户名称', trigger: 'blur'},
@@ -194,54 +182,59 @@
     computed: {
       ...mapState(["userInfo"]),
       editTitle() {
-        return this.editUser.userid > 0 ? '编辑用户' : '新增用户'
+        return this.editDevice.userid > 0 ? '编辑用户' : '新增用户'
       }
     },
     created() {
       me = this
     },
     mounted() {
-      this.getUserCount()
-      this.getUserList()
+      if (this.$route.query && this.$route.query.userid) {
+        this.userid = +this.$route.query.userid;
+      } else {
+        this.userid = +this.userInfo.userid
+      }
+      this.getDeviceList()
+    },
+    watch: {
+      '$route': function (to, from) {
+        if (to.query) {
+          this.userid = +to.query.userid;
+          this.getDeviceList()
+        }
+      }
     },
     methods: {
       validatePass(rule, value, callback) {
         if (value === '') {
           callback();
         } else {
-          if (this.editUser.checkPass !== '') {
+          if (this.editDevice.checkPass !== '') {
             this.$refs.editForm.validateField('checkPass');
           }
           callback();
         }
       },
       validatePass2(rule, value, callback) {
-        if (value !== this.editUser.passwd) {
+        if (value !== this.editDevice.passwd) {
           callback(new Error('两次输入密码不一致!'));
         } else {
           callback();
         }
       },
-      getUserCount() {
-        this.$api.invoke("getusercount", {userid: this.userInfo.userid}).then(res => {
+      getDeviceList() {
+        this.deviceList = []
+        this.$api.invoke("getequiplist", {"index": this.pageIndex, "count": PAGE_SIZE, userid: me.userid}).then(res => {
           if (res.retcode === 0) {
-            this.totalCount = res.result.usercount
+            this.totalCount = res.result.totalcount
+            this.deviceList = res.result.eqlist
           } else {
-            this.$message.error(res.mag || '获取用户总数出错')
+            this.$message.error(res.mag || '获取设备列表出错')
           }
         })
       },
-      getUserList() {
-        this.$api.invoke("getuserlist", {"index": this.pageIndex, "count": PAGE_SIZE}).then(res => {
-          if (res.retcode === 0) {
-            this.userList = res.result.userinfo
-          } else {
-            this.$message.error(res.mag || '获取用户列表出错')
-          }
-        })
-      },
-      addUser() {
-        this.editUser = {email: '', phone: '', passwrd: '', usertype: 2, checkPass: ''};
+      addDevice() {
+        this.editDevice = {email: '', phone: '', passwrd: '', usertype: 2, checkPass: ''};
         me.showDialog();
       },
       showDialog() {
@@ -251,29 +244,33 @@
           me.$refs["editForm"].resetFields();
         }
       },
-      modifyUser(user) {
-        this.editUser = user;
+      modifyDevice(user) {
+        this.editDevice = user;
         me.showDialog();
+      },
+      userChanged(newUser) {
+        me.userid = newUser;
+        me.getDeviceList()
       },
       submitForm() {
         this.$refs["editForm"].validate((valid) => {
           if (!valid) {
             return false;
           }
-          let params = {username: me.editUser.username, email: me.editUser.email, phone: me.editUser.phone, usertype: me.editUser.usertype}
-          if (me.editUser.userid) {
-            params.userid = me.editUser.userid
+          let params = {username: me.editDevice.username, email: me.editDevice.email, phone: me.editDevice.phone, usertype: me.editDevice.usertype}
+          if (me.editDevice.userid) {
+            params.userid = me.editDevice.userid
           }
-          if (me.editUser.passwd) {
-            params.passwd = md5(me.editUser.passwd)
+          if (me.editDevice.passwd) {
+            params.passwd = md5(me.editDevice.passwd)
           }
           me.$api.invoke('edituserinfo', params).then(res => {
             if (res.retcode === 0) {
               me.$message.success('保存成功!');
               me.dialogFormVisible = false
-              if (!me.editUser.userid) {
-                me.getUserCount()
-                me.getUserList()
+              if (!me.editDevice.userid) {
+                me.getDeviceCount()
+                me.getDeviceList()
               }
             } else {
               me.$message.error(res.msg || '保存用户失败')
@@ -281,7 +278,7 @@
           })
         });
       },
-      deleteUser(user, userIndex) {
+      deleteDevice(user, userIndex) {
         this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -289,7 +286,7 @@
         }).then(() => {
           me.$api.invoke("deluser", {userid: user.userid}).then(res => {
             if (res.retcode === 0) {
-              me.userList.splice(userIndex, 1)
+              me.deviceList.splice(userIndex, 1)
               me.$message.success('删除成功!');
             } else {
               me.$message.error(res.msg || '删除用户失败')
@@ -303,31 +300,25 @@
           });
         });
       },
-      changeState(user) {
-        me.$api.invoke('setuserstate', {userid: user.userid, userstate: user.userstate}).then(res => {
-          if (res.retcode === 0) {
-            me.$message.success('修改用户状态成功!');
-          } else {
-            me.$message.error(res.msg || '修改用户状态失败')
-          }
-        })
-      },
+
       pageChanged(page) {
         me.pageIndex = page;
-        me.getUserList();
+        me.getDeviceList();
       },
       actionHandle(command) {
         let action = command.split('-')[0]
-        let userIndex = command.split('-')[1]
-        let user = this.userList[userIndex]
-        if (action === 'modify') {
-          this.modifyUser(user)
-        } else if (action === 'delete') {
-          this.deleteUser(user, userIndex)
-        } else if (action === 'device') {
-          this.$router.push({path: '/deviceManage', query: {userid: user.userid}})
-        } else if (action === 'pool') {
-          this.$router.push({path: '/poolManage', query: {userid: user.userid}})
+        let index = command.split('-')[1]
+        let device = this.deviceList[index]
+        if (action === 'chart') {//设备算力图
+
+        } else if (action === 'buy') {//选购设备
+
+        } else if (action === 'release') {//转让释放设备
+
+        } else if (action === 'algo') {//配置设备算法
+
+        } else if (action === 'command') {//发送指令
+
         }
       }
     }
@@ -336,8 +327,12 @@
 </script>
 
 <style lang="stylus" scoped>
+  .el-collapse-item
+    border-bottom: 1px solid #EEE;
   .user-table
     margin: 30px auto
+  .selectable
+    border-radius: 0
   .last-login
     font-size 13px
     color #9aa0ac
@@ -357,6 +352,7 @@
       margin-right: 10px
   .miniScreen
     display flex
+    word-break: break-all;
     label
       display none
       font-weight 600

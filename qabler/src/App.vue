@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <q-header></q-header>
-    <q-tab></q-tab>
+    <!--<q-header></q-header>-->
+    <!--<q-tab></q-tab>-->
     <router-view></router-view>
-    <q-footer></q-footer>
+    <!--<q-footer></q-footer>-->
   </div>
 </template>
 

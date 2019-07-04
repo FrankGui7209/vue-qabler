@@ -11,14 +11,19 @@
   },
   "dependencies": {
     "@antv/data-set": "^0.8.9",
-    "element-ui": "^2.4.1",
+    "axios": "^0.19.0",
+    "element-ui": "^2.10.1",
+    "flyio": "^0.6.14",
     "jquery": "^3.3.1",
+    "md5": "^2.2.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "viser-vue": "^2.2.5",
     "vue": "^2.5.2",
     "vue-antd-ui": "^0.5.1",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vuex": "^3.1.1",
+    "vuex-persist": "^2.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

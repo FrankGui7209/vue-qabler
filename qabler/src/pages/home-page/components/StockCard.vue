@@ -2,10 +2,10 @@
   <div class="stock-card">
     <div class="up-down">
       <div class="up" v-if="flag">
-        <a-icon type="up"/> {{ percent }}
+        <!--<a-icon type="up"/> -->{{ percent }}
       </div>
       <div class="down" v-else>
-        <a-icon type="down"/> {{ percent }}
+        <!--<a-icon type="down"/> -->{{ percent }}
       </div>
     </div>
     <div class="content">{{ content }}</div>
@@ -26,7 +26,7 @@
         default: ''
       },
       content: {
-        type: String,
+        type: [String,Number],
         default: ''
       },
       text: {
@@ -46,7 +46,7 @@
     background-color #fff
     padding 1rem
     .up-down
-      text-align right 
+      text-align right
       .up
         color #5eba00
       .down
@@ -55,7 +55,7 @@
       font-size 2rem
       font-weight 600
       text-align center
-      padding 1.5rem 0
+      padding 1.5rem 0 2rem
     .text
       color #9aa0ac
       text-align center

@@ -1,55 +1,50 @@
 <template>
   <div class="q-basic-line-chart">
+    <div class="title">当日设备算力图</div>
     <v-chart :forceFit="true" :height="height" :data="data" :scale="scale">
-      <v-tooltip />
-      <v-axis />
-      <v-line position="year*value" />
-      <v-point position="year*value" shape="circle" />
+      <v-tooltip/>
+      <v-axis/>
+      <v-line position="time*hashrate"/>
+      <v-point position="time*hashrate" shape="circle"/>
     </v-chart>
   </div>
 </template>
 
 <script>
+  import {mapState} from 'vuex';
+
   export default {
     name: 'QBasicLineChart',
-    props: {
-      data: {
-        type: Array,
-        default: function() {
-          return [
-            { year: '1991', value: 3 },
-            { year: '1992', value: 4 },
-            { year: '1993', value: 3.5 },
-            { year: '1994', value: 5 },
-            { year: '1995', value: 4.9 },
-            { year: '1996', value: 6 },
-            { year: '1997', value: 7 },
-            { year: '1998', value: 9 },
-            { year: '1999', value: 13 }
-          ]
-        }
-      },
-      scale: {
-        type: Array,
-        default: function() {
-          return [{
-            dataKey: 'value',
-            min: 0,
-          },{
-            dataKey: 'year',
-            min: 0,
-            max: 1,
-          }]
-        }
-      },
-      height: {
-        type: Number,
-        default: 300
+    data() {
+      return {
+        data: [],
+        scale: [{dataKey: 'hashrate', min: 0,},
+          {dataKey: 'time', min: 0, max: 1,}],
+        height: 300,
+        timeStart: new Date().getTime() / 1000 - 1 * 24 * 60,
+        timeEnd: new Date().getTime() / 1000
       }
     },
+    computed: {
+      ...mapState(['userInfo'])
+    },
+    mounted() {
+      this.$api.invoke('gethashhistory', {userid: this.userInfo.userid, eqid: 0, timestart: this.timeStart, timeend: this.timeEnd})
+        .then(res => {
+          if (res.retcode === 0) {
+            this.data = res.result.hashhistory;
+          } else {
+            this.$message.error(res.msg || '获取数据出错')
+          }
+        })
+    },
+
+    methods: {}
   }
 </script>
 
 <style lang="stylus" scoped>
-
+  .title{
+    font-weight: 600;
+  }
 </style>

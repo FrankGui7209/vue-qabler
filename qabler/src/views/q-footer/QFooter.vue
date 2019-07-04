@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    Copyright &copy; {{ getYear() }} Qabler. All rights reserved. Created By Qian.
+    Copyright &copy; {{ getYear() }} Console. All rights reserved. Created By Liu.
   </div>
 </template>
 

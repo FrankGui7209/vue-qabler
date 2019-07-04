@@ -6,49 +6,39 @@
         <a-col :span="20">
           <div class="header-content">
             <div class="logo-wrapper">
-              <img src="../../assets/images/brand/tabler.svg" class="logo" alt="">
+              <img src="../../assets/images/logo.png" class="logo" alt="">
+              &nbsp;矿机后台管理
             </div>
             <div class="info-wrapper">
-              <div class="source-button">source code</div>
-              <div class="header-badge">
-                <a-badge dot>
-                  <a-icon type="notification"/>
-                </a-badge>
-              </div>
-              <a-popover trigger="click">
+              <!--<div class="source-button">source code</div>-->
+              <!--<div class="header-badge">-->
+              <!--<a-badge dot>-->
+              <!--<a-icon type="notification"/>-->
+              <!--</a-badge>-->
+              <!--</div>-->
+              <a-popover trigger="hover">
                 <template slot="content">
                   <a-menu
                     style="width: 180px"
-                    :defaultSelectedKeys="['1']"
+                    @click="handleMenu"
+                    :defaultSelectedKeys="['myProfile']"
                     :defaultOpenKeys="['sub1']">
-                    <a-menu-item key="1">
-                      <a-icon type="user" />
-                      Profile
+                    <a-menu-item key="myProfile">
+                      <a-icon type="user"/>
+                      个人信息
                     </a-menu-item>
-                    <a-menu-item key="2">
-                      <a-icon type="setting" />
-                      Settings
-                    </a-menu-item>
-                    <a-menu-item key="3">
-                      <a-icon type="inbox" />
-                      Inbox
-                    </a-menu-item>
-                    <a-menu-item key="4">
-                      <a-icon type="message" />
-                      Message
-                    </a-menu-item>
-                    <a-menu-item key="5">
-                      <a-icon type="question-circle-o" />
-                      Need help?
-                    </a-menu-item>
-                    <a-menu-item key="6">
-                      <a-icon type="logout" />
-                      Sign out
+                    <!--<a-menu-item key="2">-->
+                      <!--<a-icon type="setting"/>-->
+                      <!--修改密码-->
+                    <!--</a-menu-item>-->
+                    <a-menu-item key="logout">
+                      <a-icon type="logout"/>
+                      退出登录
                     </a-menu-item>
                   </a-menu>
                 </template>
                 <div class="header-avatar">
-                  <q-avatar title="Jane Pearson" sub-title="Administrator">
+                  <q-avatar :title="userInfo.username" :sub-title="+userInfo.usertype===1?'管理员':'普通用户'">
                     <div slot="avatar" class="avatar-wrapper">
                       <img src="../../assets/images/faces/female/19.jpg" alt="" class="avatar">
                     </div>
@@ -65,20 +55,43 @@
       <a-row>
         <a-col :span="2"></a-col>
         <a-col :span="20">
-          
+
         </a-col>
         <a-col :span="2"></a-col>
       </a-row>
     </div>
+    <edit-profile v-model="profileVisible"></edit-profile>
   </div>
 </template>
 
 <script>
   import QAvatar from '../../components/q-avatar/QAvatar.vue'
+  import EditProfile from './EditProfile'
+  import {mapMutations, mapState} from 'vuex';
+
   export default {
     name: 'QHeader',
     components: {
-      QAvatar
+      QAvatar, EditProfile
+    },
+    data() {
+      return {
+        profileVisible: false
+      }
+    },
+    computed: {
+      ...mapState(["userInfo"])
+    },
+    methods: {
+      ...mapMutations(["signOut"]),
+      handleMenu({item, key, keyPath}) {
+        if (key == 'logout') {
+          this.signOut()
+          this.$router.push("/login")
+        } else if (key === 'myProfile') {
+          this.profileVisible = true
+        }
+      }
     }
   }
 </script>
@@ -86,7 +99,6 @@
 <style lang="stylus" scoped>
   .header >>> .ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left
     border-right none
-
   .header
     background-color #fff
     .header-info
@@ -97,6 +109,9 @@
         justify-content space-between
         .logo-wrapper
           display flex
+          line-height: 31px;
+          font-size: 18px;
+          font-weight: 700;
           .logo
             height 2rem
             transition all .3s

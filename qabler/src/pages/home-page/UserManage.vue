@@ -1,14 +1,9 @@
 <template>
-  <div class="interface-page">
+  <div class="home">
     <q-header></q-header>
-    <q-tab></q-tab>
-    <a-row>
-      <a-col :span="2"></a-col>
-      <a-col :span="20">
-        <router-view></router-view>
-      </a-col>
-      <a-col :span="2"></a-col>
-    </a-row>
+    <q-tab tab="user"></q-tab>
+    <!--<router-view></router-view>-->
+    <user-table></user-table>
     <q-footer></q-footer>
   </div>
 </template>
@@ -17,16 +12,21 @@
   import QHeader from '@/views/q-header/QHeader.vue'
   import QTab from '@/views/q-tab/QTab.vue'
   import QFooter from '@/views/q-footer/QFooter.vue'
+  import UserTable from "./components/UserTable";
+
   export default {
-    name: 'InterfacePage',
+    name: 'UserManage',
     components: {
+      UserTable,
       QHeader,
       QTab,
       QFooter
-    }
+    },
+    data() {
+      return {}
+    },
   }
 </script>
 
 <style lang="stylus" scoped>
-
 </style>
