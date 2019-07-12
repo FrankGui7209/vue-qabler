@@ -9,7 +9,7 @@
             <th>ID</th>
             <th>用户名称</th>
             <th>类型</th>
-            <th>状态</th>
+            <th>状态(已激活/已停用)</th>
             <th>电话</th>
             <th>设备数量</th>
             <th>挖矿效率</th>
@@ -36,7 +36,7 @@
               </div>
             </td>
             <td>
-              <div class="miniScreen"><label>类型</label>{{user.usertype===1?'管理员':'普通'}}</div>
+              <div class="miniScreen"><label>类型</label>{{+user.usertype===1?'管理员':'普通'}}</div>
             </td>
             <td>
               <div class="miniScreen"><label>状态</label>
@@ -45,7 +45,7 @@
                   active-color="#13ce66"
                   inactive-color="#ff4949"
                   :active-value="1"
-                  :inactive-value="0">
+                  :inactive-value="0" >
                 </el-switch>
               </div>
             </td>
@@ -109,7 +109,7 @@
     <el-dialog ref="dialog" :title="editTitle" :visible.sync="dialogFormVisible">
       <el-form ref="editForm" :model="editUser" status-icon label-position="right" size="mini" label-width="100px" :rules="rules">
         <el-form-item label="用户名称" prop="username">
-          <el-input required v-model="editUser.username" autoComplete="off" :disabled="editUser.userid>0"></el-input>
+          <el-input required v-model="editUser.username" autoComplete="off" :disabled="editUser.userid"></el-input>
         </el-form-item>
         <el-form-item label="电子邮件" prop="email">
           <el-input type="email" v-model="editUser.email" autoComplete="off"></el-input>
@@ -124,12 +124,12 @@
           <el-input v-model="editUser.phone" autoComplete="off"></el-input>
         </el-form-item>
         <el-form-item label="用户密码" prop="passwd"
-                      :rules="editUser.userid>0?[{validator: validatePass, trigger: 'blur'}]:[
+                      :rules="editUser.userid?[{validator: validatePass, trigger: 'blur'}]:[
                       {required: true, message: '请输入用户密码', trigger: 'blur'},
                       {validator: validatePass, trigger: 'blur'}]">
           <el-input type="password" v-model="editUser.passwd" autoComplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass" :rules="editUser.userid>0?[{validator: validatePass2, trigger: 'blur'}]:[
+        <el-form-item label="确认密码" prop="checkPass" :rules="editUser.userid?[{validator: validatePass2, trigger: 'blur'}]:[
             {required: true, message: '请输入确认密码', trigger: 'blur'},
             {validator: validatePass2, trigger: 'blur'}
           ]">
@@ -262,7 +262,7 @@
           }
           let params = {username: me.editUser.username, email: me.editUser.email, phone: me.editUser.phone, usertype: me.editUser.usertype}
           if (me.editUser.userid) {
-            params.userid = me.editUser.userid
+            params.destuserid = me.editUser.userid
           }
           if (me.editUser.passwd) {
             params.passwd = md5(me.editUser.passwd)
@@ -297,14 +297,10 @@
           })
 
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
         });
       },
       changeState(user) {
-        me.$api.invoke('setuserstate', {userid: user.userid, userstate: user.userstate}).then(res => {
+        me.$api.invoke('setuserstate', {userid: user.userid, userstate: +user.userstate}).then(res => {
           if (res.retcode === 0) {
             me.$message.success('修改用户状态成功!');
           } else {

@@ -3,7 +3,7 @@
     <el-dialog ref="dialog" title="个人信息" :visible.sync="value">
       <el-form ref="editForm" :model="editUser" status-icon label-position="right" size="mini" label-width="100px" :rules="rules">
         <el-form-item label="用户名称" prop="username">
-          <el-input required v-model="editUser.username" autoComplete="off" :disabled="editUser.userid>0"></el-input>
+          <el-input required v-model="editUser.username" autoComplete="off" :disabled="editUser.userid"></el-input>
         </el-form-item>
         <el-form-item label="电子邮件" prop="email">
           <el-input type="email" v-model="editUser.email" autoComplete="off"></el-input>

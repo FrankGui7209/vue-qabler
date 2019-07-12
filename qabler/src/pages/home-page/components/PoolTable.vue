@@ -98,7 +98,7 @@
       return {
         pageIndex: 1,
         totalCount: 0,
-        userid: 0,
+        userid: "0",
         poolList: [],
         allAlgoList: [],
         dialogFormVisible: false,
@@ -135,16 +135,16 @@
     mounted() {
       this.getAlgoList()
       if (this.$route.query && this.$route.query.userid) {
-        this.userid = +this.$route.query.userid;
+        this.userid = this.$route.query.userid+"";
       } else {
-        this.userid = +this.userInfo.userid
+        this.userid = this.userInfo.userid+""
       }
       this.getPoolList()
     },
     watch: {
       '$route': function (to, from) {
         if (to.query) {
-          this.userid = +to.query.userid;
+          this.userid = to.query.userid;
           this.getPoolList()
         }
       }
@@ -152,13 +152,13 @@
     methods: {
       ...mapMutations(['setAlgoList']),
       getAlgoList() {
-        if (this.algoList) {
-          this.allAlgoList = this.algoList
-          return
-        }
+        // if (this.algoList) {
+        //   this.allAlgoList = this.algoList
+        //   return
+        // }
         this.$api.invoke("getalgolist", {userid: me.userid}).then(res => {
           if (res.retcode === 0) {
-            this.allAlgoList = res.result
+            this.allAlgoList = res.result.algo||[]
             this.setAlgoList(this.allAlgoList)
           } else {
             this.$message.error(res.mag || '获取算法列表出错')
@@ -169,7 +169,7 @@
         this.poolList = []
         this.$api.invoke("getpoollist", {userid: me.userid}).then(res => {
           if (res.retcode === 0) {
-            this.poolList = res.result
+            this.poolList = res.result||[]
           } else {
             this.$message.error(res.mag || '获取矿池列表出错')
           }

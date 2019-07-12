@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="title">算法使用比例图</div>
-    <v-chart :forceFit="true" :height="height" :data="data" :scale="scale">
+    <v-chart :forceFit="true" :height="height" :data="showData" :scale="scale">
       <v-tooltip :showTitle="false" dataKey="algoname*percent"/>
       <v-axis/>
       <v-legend dataKey="algoid"/>
@@ -42,12 +42,12 @@
   export default {
     name: 'QPieChart',
     props: {
-      data: {
-        type: Array,
-        default: function () {
-          return dataExample
-        }
-      },
+      // data: {
+      //   type: Array,
+      //   default: function () {
+      //     return dataExample
+      //   }
+      // },
       height: {
         type: Number,
         default: 300
@@ -72,14 +72,22 @@
         default: function () {
           return ['percent', {
             formatter: (val, item) => {
-              return item.point.algoid+"-"+item.point.algoname + ': ' + val;
+              return item.point.algoid + "-" + item.point.algoname + ': ' + val;
             }
           }]
         }
       }
     },
+    data() {
+      return {
+        data: dataExample
+      }
+    },
     computed: {
-      ...mapState(['userInfo'])
+      ...mapState(['userInfo']),
+      showData() {
+        return this.data
+      }
     },
     mounted() {
       this.$api.invoke('gettotalstatus', {userid: this.userInfo.userid}).then(res => {
@@ -103,7 +111,7 @@
 </script>
 
 <style scoped>
-  .title{
+  .title {
     font-weight: 600;
   }
 </style>
