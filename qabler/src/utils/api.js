@@ -39,7 +39,7 @@ axios.interceptors.response.use(
   });
 
 const api = {
-  invoke: (method, paramObj) => axios.post('/app',
+  invoke: (method, paramObj) => axios.post('/openapi',
     {method: method, params: paramObj}, {
     headers: {
       'Content-Type': 'application/json',

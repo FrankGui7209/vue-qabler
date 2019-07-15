@@ -10,11 +10,11 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      "/app":{
+      "/openapi":{
         target: 'http://minerupdate.aaajoy.net:8005',
         changeOrigin: true,
         pathRewrite: {
-          '^/app': '/ctrl.cgi'
+          '^/openapi': '/ctrl.cgi'
         }
       },
     },
