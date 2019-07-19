@@ -1,6 +1,8 @@
 <template>
   <div class="user-table">
-    <select-user :value="userid" @userChanged="userChanged" v-show="+userInfo.usertype===1"></select-user>
+    <select-user :value="userid" @userChanged="userChanged" v-show="+userInfo.usertype===1"
+                 v-if="this.userInfo.usertype == 1" :has-all="false">
+    </select-user>
     <a-row>
       <a-col :span="2"></a-col>
       <a-col :span="20">

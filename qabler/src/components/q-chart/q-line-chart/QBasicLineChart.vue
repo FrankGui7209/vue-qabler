@@ -1,7 +1,18 @@
 <template>
   <div class="q-basic-line-chart">
-    <div class="title">设备{{equuid=='0'?'':equuid}}算力图
-      <el-date-picker style="float:right"
+    <div class="title" v-if="equuid=='0'">
+      <label v-if="equuid=='0'">设备算力图</label>
+      <el-date-picker style="float:right" size="mini"
+                      v-model="dateScope"
+                      type="datetimerange"
+                      range-separator="至"
+                      @change="dateScopeChanged"
+                      start-placeholder="开始日期"
+                      end-placeholder="结束日期">
+      </el-date-picker>
+    </div>
+    <div class="title" v-else>
+      <el-date-picker size="mini"
                       v-model="dateScope"
                       type="datetimerange"
                       range-separator="至"

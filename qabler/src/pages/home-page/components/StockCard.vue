@@ -1,5 +1,5 @@
 <template>
-  <div class="stock-card">
+  <div class="stock-card" @click="linkMethod">
     <div class="up-down">
       <div class="up" v-if="flag">
         <!--<a-icon type="up"/> -->{{ percent }}
@@ -26,7 +26,7 @@
         default: ''
       },
       content: {
-        type: [String,Number],
+        type: [String, Number],
         default: ''
       },
       text: {
@@ -34,6 +34,11 @@
         default: ''
       }
     },
+    methods:{
+      linkMethod(){
+        this.$emit('click')
+      }
+    }
   }
 </script>
 

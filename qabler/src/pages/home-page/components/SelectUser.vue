@@ -28,7 +28,8 @@
   export default {
     name: 'SelectUser',
     props: {
-      value: {type: String, default: "0"}
+      value: {type: String, default: "0"},
+      hasAll: {type: Boolean, default: true}
     },
     data() {
       return {
@@ -43,12 +44,12 @@
       me = this
     },
     mounted() {
-      this.selectUser = this.value+""
+      this.selectUser = this.value + ""
       this.getUserList()
     },
     watch: {
       value(to, from) {
-        this.selectUser = to+""
+        this.selectUser = to + ""
       }
     },
     methods: {
@@ -60,8 +61,8 @@
         // }
         this.$api.invoke("getuserlist", {"index": 1, "count": PAGE_SIZE}).then(res => {
           if (res.retcode === 0) {
-            if (+this.userInfo.usertype === 1) {
-              res.result.userinfo = [{userid: "0", username: '<所有>'}].concat(res.result.userinfo)
+            if (+this.userInfo.usertype === 1 && this.hasAll) {
+              res.result.userinfo = [{userid: "0", username: '平台在售'}].concat(res.result.userinfo)
             }
             res.result.userinfo.forEach(v => {
               v.userlabel = v.userid + ' - ' + v.username

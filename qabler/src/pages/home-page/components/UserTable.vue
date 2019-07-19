@@ -9,7 +9,7 @@
             <th>ID</th>
             <th>用户名称</th>
             <th>类型</th>
-            <th>状态(已激活/已停用)</th>
+            <th>状态</th>
             <th>电话</th>
             <th>设备数量</th>
             <th>挖矿效率</th>
@@ -40,13 +40,7 @@
             </td>
             <td>
               <div class="miniScreen"><label>状态</label>
-                <el-switch
-                  v-model="user.userstate" @change="changeState(user)"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                  :active-value="1"
-                  :inactive-value="0" >
-                </el-switch>
+                {{+user.userstate===1?'已激活':'已停用'}}
               </div>
             </td>
             <td>
@@ -77,12 +71,13 @@
               <div class="miniScreen"><label>累计收益(人民币￥)</label>{{user.cnytotal}}</div>
             </td>
             <td class="btns">
-              <el-dropdown size="small" @command="actionHandle">
+              <el-dropdown size="small" @command="actionHandle" :trigger="dropdownMenuTrigger">
                 <el-button type="primary">
                   操作<i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item icon="el-icon-edit" :command="'modify-'+userIndex">编辑用户</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-delete" :command="'switchstate-'+userIndex">切换状态</el-dropdown-item>
                   <el-dropdown-item icon="el-icon-delete" :command="'delete-'+userIndex">删除用户</el-dropdown-item>
                   <el-dropdown-item icon="el-icon-office-building" divided :command="'device-'+userIndex">矿机管理</el-dropdown-item>
                   <el-dropdown-item icon="el-icon-help" :command="'pool-'+userIndex">矿池管理</el-dropdown-item>
@@ -160,8 +155,8 @@
       QAvatars
     },
     data() {
-
       return {
+        dropdownMenuTrigger: screen.availWidth > 700 ? 'hover' : 'click',
         pageIndex: 1,
         totalCount: 0,
         userList: [],
@@ -299,14 +294,23 @@
         }).catch(() => {
         });
       },
-      changeState(user) {
-        me.$api.invoke('setuserstate', {userid: user.userid, userstate: +user.userstate}).then(res => {
-          if (res.retcode === 0) {
-            me.$message.success('修改用户状态成功!');
-          } else {
-            me.$message.error(res.msg || '修改用户状态失败')
-          }
-        })
+      changeState(user, userIndex) {
+        this.$confirm('此操作将切换用户状态为【' + (+user.userstate === 1 ? '已停用' : '已激活') + '】, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let newState = user.userstate === 1 ? 0 : 1;
+          me.$api.invoke('setuserstate', {userid: user.userid, userstate: newState}).then(res => {
+            if (res.retcode === 0) {
+              me.$set(user, "userstate", newState);
+              me.$message.success('修改用户状态成功!');
+            } else {
+              me.$message.error(res.msg || '修改用户状态失败')
+            }
+          })
+        }).catch(() => {
+        });
       },
       pageChanged(page) {
         me.pageIndex = page;
@@ -320,6 +324,8 @@
           this.modifyUser(user)
         } else if (action === 'delete') {
           this.deleteUser(user, userIndex)
+        } else if (action === 'switchstate') {
+          this.changeState(user, userIndex)
         } else if (action === 'device') {
           this.$router.push({path: '/deviceManage', query: {userid: user.userid}})
         } else if (action === 'pool') {

@@ -13,7 +13,7 @@
             <div class="profile-card">
               <reverse-profile :time="time" :name="name" :at="at" :content="content" :note-count="noteCount" :like-count="likeCount" :twitter-count="twitterCount">
                 <q-avatars slot="avatar-section" size="avatar-xxl">
-                  <img src="../../../../assets/images/faces/female/28.jpg" alt="" slot="avatar">
+                  <img src="/static/assets/images/faces/female/28.jpg" alt="" slot="avatar">
                 </q-avatars>
               </reverse-profile>
             </div>
@@ -76,6 +76,6 @@
       flex-flow wrap
       justify-content space-between
     .rtl-card
-      text-align right 
+      text-align right
       margin 2rem 0
 </style>

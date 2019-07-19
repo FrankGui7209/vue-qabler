@@ -6,7 +6,7 @@
         <a-col :span="20">
           <div class="header-content">
             <div class="logo-wrapper">
-              <img src="../../assets/images/logo.png" class="logo" alt="">
+              <img src="/static/logo.png" class="logo" alt="">
               &nbsp;矿机后台管理
             </div>
             <div class="info-wrapper">
@@ -40,7 +40,7 @@
                 <div class="header-avatar">
                   <q-avatar :title="userInfo.username" :sub-title="+userInfo.usertype===1?'管理员':'普通用户'">
                     <div slot="avatar" class="avatar-wrapper">
-                      <img src="../../assets/images/faces/female/19.jpg" alt="" class="avatar">
+                      <img src="/static/assets/images/faces/female/19.jpg" alt="" class="avatar">
                     </div>
                   </q-avatar>
                 </div>

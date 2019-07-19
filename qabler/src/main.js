@@ -7,12 +7,12 @@ import VueAntd from 'vue-antd-ui'
 import VueViser from 'viser-vue'
 import ElementUI from 'element-ui';
 import store from '@/vuex/store';
-import 'element-ui/lib/theme-chalk/index.css';
-import 'vue-antd-ui/dist/antd.css'
-import './assets/css/reset.css'
+// import 'element-ui/lib/theme-chalk/index.css';//转到index.html
+//import 'vue-antd-ui/dist/antd.css'//转到index.html
+// import './assets/css/reset.css'
 // import './common/js/rem'
-import './assets/semantic.css'
-import './assets/semantic.js'
+// import './assets/semantic.css'
+// import './assets/semantic.js'
 import api from '@/utils/api'
 
 Vue.config.productionTip = false

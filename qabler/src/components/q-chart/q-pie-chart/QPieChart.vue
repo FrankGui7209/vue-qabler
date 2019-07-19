@@ -4,8 +4,8 @@
     <v-chart :forceFit="true" :height="height" :data="showData" :scale="scale">
       <v-tooltip :showTitle="false" dataKey="algoname*percent"/>
       <v-axis/>
-      <v-legend dataKey="algoid"/>
-      <v-pie position="percent" color="algoid" :v-style="pieStyle" :label="labelConfig"/>
+      <v-legend dataKey="algoname"/>
+      <v-pie position="percent" color="algoname" :v-style="pieStyle" :label="labelConfig"/>
       <v-coord type="theta"/>
     </v-chart>
   </div>
@@ -72,7 +72,7 @@
         default: function () {
           return ['percent', {
             formatter: (val, item) => {
-              return item.point.algoid + "-" + item.point.algoname + ': ' + val;
+              return item.point.algoname  + ': ' + val;
             }
           }]
         }
@@ -92,11 +92,11 @@
     mounted() {
       this.$api.invoke('gettotalstatus', {userid: this.userInfo.userid}).then(res => {
         if (res.retcode === 0) {
-          const dv = new DataSet.View().source(res.result.algoequip);
+          const dv = new DataSet.View().source(res.result.algoequip.filter(v => +v.equipnum > 0));
           dv.transform({
             type: 'percent',
             field: 'equipnum',
-            dimension: 'algoid',
+            dimension: 'algoname',
             as: 'percent'
           });
           this.data = dv.rows;
@@ -113,5 +113,6 @@
 <style scoped>
   .title {
     font-weight: 600;
+    padding-bottom: 10px;
   }
 </style>

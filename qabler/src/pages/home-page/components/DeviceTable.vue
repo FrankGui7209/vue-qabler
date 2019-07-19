@@ -1,6 +1,6 @@
 <template>
   <div class="user-table">
-    <a-row>
+    <a-row v-if="this.userInfo.usertype == 1">
       <a-col :span="2"></a-col>
       <a-col :span="20" style="display: flex">
         <select-user :value="userid" @userChanged="userChanged" v-show="+userInfo.usertype===1"></select-user>
@@ -44,27 +44,29 @@
           <tbody>
           <tr v-for="(device,deviceIndex) in deviceList" :key="deviceIndex">
             <td>
-              <el-checkbox v-model="device.checked" @change="selectItem(device)"></el-checkbox>
+              <div class="miniScreen"><label class="label">选择</label>
+               <el-checkbox v-model="device.checked" @change="selectItem(device)"></el-checkbox>
+              </div>
             </td>
             <td>
-              <div class="miniScreen"><label>设备ID</label>{{device.eqid}}</div>
+              <div class="miniScreen"><label class="label">设备ID</label>{{device.eqid}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>设备UUID</label> {{device.equuid}}</div>
+              <div class="miniScreen"><label class="label">设备UUID</label> {{device.equuid}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>购买状态</label>
+              <div class="miniScreen"><label class="label">购买状态</label>
                 <el-switch
                   v-model="device.buystate"
                   active-color="#13ce66"
                   inactive-color="#ff4949"
-                  active-value="1" disabled
+                 active-value="1" disabled
                   inactive-value="0">
                 </el-switch>
               </div>
             </td>
             <td>
-              <div class="miniScreen"><label>在线状态</label>
+              <div class="miniScreen"><label class="label">在线状态</label>
                 <el-switch
                   v-model="device.online"
                   active-color="#13ce66"
@@ -75,48 +77,48 @@
               </div>
             </td>
             <td>
-              <div class="miniScreen"><label>设备算力</label>{{device.hashrate}}</div>
+              <div class="miniScreen"><label class="label">设备算力</label>{{device.hashrate}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>累计计算值</label>{{device.hashtotal}}</div>
+              <div class="miniScreen"><label class="label">累计计算值</label>{{device.hashtotal}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>累计工作时长</label>{{device.worktime}}</div>
+              <div class="miniScreen"><label class="label">累计工作时长</label>{{device.worktime}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>接受的数量</label>{{device.accept}}</div>
+              <div class="miniScreen"><label class="label">接受的数量</label>{{device.accept}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>拒绝的数量</label>{{device.reject}}</div>
+              <div class="miniScreen"><label class="label">拒绝的数量</label>{{device.reject}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>接受效率</label>{{device.acceptrate}}</div>
+              <div class="miniScreen"><label class="label">接受效率</label>{{device.acceptrate}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>当前算法</label>{{device.algoname}}</div>
+              <div class="miniScreen"><label class="label">当前算法</label>{{device.algoname}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>算法策略</label>{{+device.algostrategy===0?'矿池配置':'具体算法'}}</div>
+              <div class="miniScreen"><label class="label">算法策略</label>{{+device.algostrategy===0?'矿池配置':'具体算法'}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>当前矿池</label>{{device.pool}}</div>
+              <div class="miniScreen"><label class="label">当前矿池</label>{{device.pool}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>版本</label>{{device.version}}</div>
+              <div class="miniScreen"><label class="label">版本</label>{{device.version}}</div>
             </td>
             <td>
-              <div class="miniScreen"><label>版本时间</label>{{device.versiontime}}</div>
+              <div class="miniScreen"><label class="label">版本时间</label>{{device.versiontime}}</div>
             </td>
             <td class="btns">
-              <el-dropdown size="small" @command="actionHandle">
+              <el-dropdown size="small" @command="actionHandle" :trigger="dropdownMenuTrigger">
                 <el-button type="primary">
                   操作<i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item icon="el-icon-edit" :command="'chart-'+deviceIndex">设备算力折线图</el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-s-promotion" divided :command="'buy-'+deviceIndex" :disabled="device.buystate==1">选购设备
+                  <el-dropdown-item icon="el-icon-s-promotion" divided :command="'buy-'+deviceIndex" :disabled="device.buystate=='1'">选购设备
                   </el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-delete" :command="'release-'+deviceIndex" :disabled="device.buystate==0">转让/释放设备</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-delete" :command="'release-'+deviceIndex" :disabled="device.buystate=='0'">转让/释放设备</el-dropdown-item>
                   <el-dropdown-item icon="el-icon-office-building" :command="'algo-'+deviceIndex">配置算法策略</el-dropdown-item>
                   <el-dropdown-item icon="el-icon-help" :command="'command-'+deviceIndex">发送设备指令</el-dropdown-item>
                 </el-dropdown-menu>
@@ -141,9 +143,9 @@
       <el-form ref="editForm" :model="commandDevice" status-icon label-position="right" size="mini" label-width="100px" :rules="rules">
         <el-form-item label="设备类型" prop="deviceType" v-if="!commandDevice.equuid">
           <el-radio-group v-model="commandDevice.deviceType">
-            <el-radio :label="1">当前已选设备</el-radio>
+            <el-radio :label="0">当前已选设备</el-radio>
             <el-radio :label="2" :disabled="userid==='0'">当前用户设备</el-radio>
-            <el-radio :label="3">所有用户设备</el-radio>
+            <el-radio :label="1">所有用户设备</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="设备编号" prop="equuid" v-else>
@@ -202,7 +204,10 @@
         <el-button type="primary" @click="changeAlgo()">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="设备算力图" :visible.sync="dialogFormVisible3">
+    <el-dialog class="equCalc" :visible.sync="dialogFormVisible3">
+      <div slot="title">
+        <label style="font-weight: 700">设备{{chartEquuid}}算力图</label>
+      </div>
       <q-basic-line-chart ref="chart" :equuid="chartEquuid"></q-basic-line-chart>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible3 = false">确定</el-button>
@@ -224,6 +229,7 @@
     components: {SelectUser, QBasicLineChart},
     data() {
       return {
+        dropdownMenuTrigger: screen.availWidth > 700 ? 'hover' : 'click',
         checkAll: false,
         batchType: 1,
         userid: "0",
@@ -362,18 +368,16 @@
             return
           }
           let params = {
-            allequip: +me.commandDevice.deviceType === 3 ? 1 : 0,
+            allequip: +me.commandDevice.deviceType,
             cmd: {
               cmdtype: me.commandDevice.cmdtype,
               cmddata: {method: me.commandDevice.method, data: me.commandDevice.data}
             }
           }
-          if (me.commandDevice.equuid) {
-            params.eqlist = []
-            params.eqlist.push(me.commandDevice.equuid)
-            params.allequip = 0
-          }
-          else if (+me.commandDevice.deviceType === 1) {//当前已选设备
+          // allequip=0时，eqlist
+          // allequip=1，所有用户设备
+          // allequip=2，当前所选用户设备
+          if (+me.commandDevice.deviceType === 0) {//当前已选设备
             params.eqlist = []
             me.deviceList.forEach(v => {
               if (v.checked) {
@@ -434,7 +438,7 @@
           }
           me.$api.invoke("buyequip", {equuid: equuid, buypasswd: value}).then(res => {
             if (res.retcode === 0) {
-              me.$set(device, 'buystate', 1)
+              me.$set(device, 'buystate', "1")
               me.$message.success('购买成功!');
             } else {
               me.$message.error(res.msg || '购买失败')
@@ -449,9 +453,9 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          me.$api.invoke("freeequip", {epid: device.epid, epuuid: device.epuuid, destuserid: 0}).then(res => {
+          me.$api.invoke("freeequip", {eqid: device.eqid, equuid: device.equuid, destuserid: 0}).then(res => {
             if (res.retcode === 0) {
-              me.$set(device, 'buystate', 0)
+              me.$set(device, 'buystate', "0")
               me.$message.success('释放成功!');
             } else {
               me.$message.error(res.msg || '释放失败')
@@ -488,7 +492,19 @@
 
   }
 </script>
-
+<style rel="stylesheet/css" lang="css">
+  .equCalc .el-dialog__body {
+  }
+  .equCalc .el-date-editor .el-range-input {
+    text-align: left !important;
+  }
+  .equCalc .el-date-editor--datetimerange.el-input__inner {
+    width: 350px !important;
+  }
+  .equCalc .el-range-separator {
+    width: 10% !important;
+  }
+</style>
 <style lang="stylus" scoped>
   .el-collapse-item
     border-bottom: 1px solid #EEE;
@@ -516,7 +532,7 @@
   .miniScreen
     display flex
     word-break: break-all;
-    label
+    .label
       display none
       font-weight 600
   @media only screen and (max-width: 767px) {
@@ -524,7 +540,7 @@
       display: none !important
     }
     .miniScreen {
-      label {
+      .label {
         display block
         width: 50%;
       }

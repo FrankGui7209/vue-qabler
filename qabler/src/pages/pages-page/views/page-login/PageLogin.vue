@@ -103,7 +103,7 @@
     margin-top 2rem
     clear both
   .page-login
-    background url(../../../../assets/images/background.jpg) no-repeat
+    background url(/static/background.jpg) no-repeat
     background-size:100% 100%;
     overflow: hidden;
     width 100vw
